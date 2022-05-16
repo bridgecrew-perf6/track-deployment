@@ -16,6 +16,13 @@ inputs:
     description: >-
       The URL of the repository being tracked
     required: true
+  environment: 
+    description: >-
+      The environment being deployed to
+    required: true
+    options: 
+        - pre
+        - prod
   deployment-date-time:
   description: >-
       The ISO-formatted date and time of the deployment
