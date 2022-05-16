@@ -1,0 +1,28 @@
+name: 'Track Deployment'
+description: 'Track your deployment to Pre-Production and Production with this GitHub Action'
+branding:
+  icon: 'activity'
+  color: 'white'
+inputs:
+  vendor-api-key:
+    description: >-
+      Deployment vendor API Key
+    required: true
+  sha-to-track:
+    description: >-
+      The git sha of the deployment to track
+    required: true
+  repository-url:
+    description: >-
+      The URL of the repository being tracked
+    required: true
+  deployment-date-time:
+  description: >-
+      The ISO-formatted date and time of the deployment
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        echo Hello 
+      shell: bash
