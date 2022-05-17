@@ -33,6 +33,9 @@ runs:
     - run: |
         Install-Module -Name AWS.Tools.Installer -Force 
         Install-AWSToolsModule AWS.Tools.CloudWatch -CleanUp -Force
+        ls
+      shell: pwsh
+    - run: logDeployment.ps1
       shell: pwsh
 # runs:
 #   using: 'docker'
