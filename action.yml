@@ -27,9 +27,11 @@ inputs:
     description: >-
       The ISO-formatted date and time of the deployment
     required: true
-  runs:
-    using: 'docker'
-    image: 'Dockerfile'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.deployment-sha }}
 # runs:
 #   using: "composite"
 #   steps:
