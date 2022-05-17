@@ -31,7 +31,7 @@ runs:
   using: "composite"
   steps:
     - run: |
-        Install-Module -Name AWS.Tools.Installer -Force
+        Install-Module -Name AWS.Tools.Installer -Force -Confirm:$false
         Install-AWSToolsModule AWS.Tools.CloudWatch
 
         function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
