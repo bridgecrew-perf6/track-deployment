@@ -36,7 +36,7 @@ runs:
         ls
         pwsh
       shell: pwsh
-    - run: ${{ github.action_path }}/logDeployment.ps1
+    - run: ${{ github.action_path }}/logDeployment.ps1 -sha ${{ inputs.deployment-sha }} -repoUrl ${{ inputs.repository-url }} -env ${{ inputs.environment }}  
       shell: pwsh
 # runs:
 #   using: 'docker'

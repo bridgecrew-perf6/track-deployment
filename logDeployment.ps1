@@ -1,3 +1,12 @@
+param(
+    [parameter(Mandatory = $true)]
+    [string]$sha,
+    [parameter(Mandatory = $true)]
+    [string]$repoUrl,
+    [parameter(Mandatory = $true)]
+    [string]$env
+)
+
 function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
     $message = @{
         Environment   = $environment
@@ -33,14 +42,10 @@ function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $enviro
 $dateTime = Get-Date
 
 try {    
-    Get-AWSPowerShellVersion #for some reason the octo server will not use the correct version of aws tools without this line
     $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
-    $repositoryUrl = "https://github.com/ellevation/ellevation-web.git"
-    $environment = "Pre"
-    $packageVersion = $OctopusParameters["Octopus.Action.Package[Ellevation.Web].PackageVersion"]
-    $replacedString = $packageVersion.Split("-")
-    $hash = $replacedString[1].Substring(1)
-    Write-Host "Short hash is $hash"
+    $repositoryUrl = $repoUrl
+    $environment = $env
+    #$hash = $hash
     
     Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment    
 }
