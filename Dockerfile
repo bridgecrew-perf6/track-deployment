@@ -1,4 +1,8 @@
 FROM ubuntu 
+
+RUN ls
+ADD logDeployment.ps1 ./logDeployment.ps1
+
 ENV builddir=build
 RUN mkdir \${builddir}
 RUN apt-get update
@@ -10,4 +14,6 @@ RUN add-apt-repository universe
 RUN apt-get install -y powershell
 RUN ["pwsh", "-command" ,"$psversiontable"]
 RUN ls
+RUN pwsh
 
+ENTRYPOINT [ "logDeployment.ps1" ]
