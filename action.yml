@@ -27,68 +27,73 @@ inputs:
     description: >-
       The ISO-formatted date and time of the deployment
     required: true
-runs:
-  using: "composite"
-  steps:
-    - run: |
-        Install-Module -Name AWS.Tools.Installer -Force -Confirm:Y
-        Install-AWSToolsModule AWS.Tools.CloudWatch -CleanUp
+  runs:
+    using: 'docker'
+    image: 'Dockerfile'
+    args:
+      - ${{ inputs.deployment-sha }}
+# runs:
+#   using: "composite"
+#   steps:
+#     - run: |
+#         Install-Module -Name AWS.Tools.Installer -Force -Confirm:
+#         Install-AWSToolsModule AWS.Tools.CloudWatch -CleanUp
 
-        function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
-          $message = @{
-              Environment   = $environment
-              Timestamp     = $currentTime
-              HeadSha       = $hash
-              RepositoryUrl = $repositoryUrl
-          }
+#         function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
+#           $message = @{
+#               Environment   = $environment
+#               Timestamp     = $currentTime
+#               HeadSha       = $hash
+#               RepositoryUrl = $repositoryUrl
+#           }
 
-          $logEntry = New-Object -TypeName 'Amazon.CloudWatchLogs.Model.InputLogEvent'
-          $logEntry.Message = ($message | ConvertTo-Json)
-          $logEntry.Timestamp = (Get-Date).ToUniversalTime()
+#           $logEntry = New-Object -TypeName 'Amazon.CloudWatchLogs.Model.InputLogEvent'
+#           $logEntry.Message = ($message | ConvertTo-Json)
+#           $logEntry.Timestamp = (Get-Date).ToUniversalTime()
 
-          $stream = Get-CWLLogStream -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamNamePrefix "OctoLogStream"
-          $response = Write-CWLLogEvent -SequenceToken $stream.UploadSequenceToken -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamName "OctoLogStream" -LogEvent $logEntry
+#           $stream = Get-CWLLogStream -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamNamePrefix "OctoLogStream"
+#           $response = Write-CWLLogEvent -SequenceToken $stream.UploadSequenceToken -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamName "OctoLogStream" -LogEvent $logEntry
           
-          Write-Host "Next Sequence Token" $response
-        }
+#           Write-Host "Next Sequence Token" $response
+#         }
 
-        function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $environment) {
-            $uri = "https://public-api.linearb.io/api/v1/cycle-time-stages"
-            $body = @{
-                head_sha   = $hash
-                repo_url   = $repositoryUrl
-                stage_id   = $environment
-                event_time = $currentTimeInUnixSeconds
-            }
+#         function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $environment) {
+#             $uri = "https://public-api.linearb.io/api/v1/cycle-time-stages"
+#             $body = @{
+#                 head_sha   = $hash
+#                 repo_url   = $repositoryUrl
+#                 stage_id   = $environment
+#                 event_time = $currentTimeInUnixSeconds
+#             }
 
-            $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $LinearBAPI; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
+#             $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $LinearBAPI; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
 
-            Write-Host $response
-        }
+#             Write-Host $response
+#         }
 
-        $dateTime = Get-Date
+#         $dateTime = Get-Date
 
-        try {    
-            $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
-            $repositoryUrl = ${{inputs.repository-url}}
-            $environment = ${{inputs.environment}}
-            $hash = ${{inputs.deployment-sha}}
+#         try {    
+#             $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
+#             $repositoryUrl = ${{inputs.repository-url}}
+#             $environment = ${{inputs.environment}}
+#             $hash = ${{inputs.deployment-sha}}
             
-            Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment    
-        }
-        catch {
-            Write-Host "Deploy Tracking Call Failed"
-            Write-Host $_
-        }
+#             Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment    
+#         }
+#         catch {
+#             Write-Host "Deploy Tracking Call Failed"
+#             Write-Host $_
+#         }
 
-        try {
-            Write-Host "Logging to cloudwatch"
-            $universalTime = $dateTime.ToUniversalTime()
-            $formattedDate = Get-Date $universalTime -Format "o"
-            Write-CloudWatchLog $formattedDate $hash $repositoryUrl $environment
-        }
-        catch {
-            Write-Host "Deploy Tracking Call Failed"
-            Write-Host $_
-        }
-      shell: pwsh
+#         try {
+#             Write-Host "Logging to cloudwatch"
+#             $universalTime = $dateTime.ToUniversalTime()
+#             $formattedDate = Get-Date $universalTime -Format "o"
+#             Write-CloudWatchLog $formattedDate $hash $repositoryUrl $environment
+#         }
+#         catch {
+#             Write-Host "Deploy Tracking Call Failed"
+#             Write-Host $_
+#         }
+#       shell: pwsh
