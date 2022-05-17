@@ -4,7 +4,9 @@ param(
     [parameter(Mandatory = $true)]
     [string]$repoUrl,
     [parameter(Mandatory = $true)]
-    [string]$env
+    [string]$env,
+    [parameter(Mandatory = $true)]
+    [string]$vendorKey
 )
 
 function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
@@ -25,7 +27,7 @@ function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) 
     Write-Host "Next Sequence Token" $response
 }
 
-function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $environment) {
+function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $environment, $vendorKey) {
     $uri = "https://public-api.linearb.io/api/v1/cycle-time-stages"
     $body = @{
         head_sha   = $hash
@@ -34,7 +36,7 @@ function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $enviro
         event_time = $currentTimeInUnixSeconds
     }
 
-    $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $LinearBAPI; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
+    $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
 
     Write-Host $response
 }
@@ -45,9 +47,8 @@ try {
     $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
     $repositoryUrl = $repoUrl
     $environment = $env
-    #$hash = $hash
     
-    Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment    
+    Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment $vendorKey  
 }
 catch {
     Write-Host "Deploy Tracking Call Failed"
