@@ -8,7 +8,7 @@ inputs:
     description: >-
       Deployment vendor API Key
     required: true
-  sha-to-track:
+  deployment-sha:
     description: >-
       The git sha of the deployment to track
     required: true
@@ -31,7 +31,9 @@ runs:
   using: "composite"
   steps:
     - run: |
-        ls
+        Install-Module -Name AWS.Tools.Installer -Force
+        Install-AWSToolsModule AWS.Tools.CloudWatch
+
         function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
           $message = @{
               Environment   = $environment
@@ -64,17 +66,13 @@ runs:
             Write-Host $response
         }
 
-        $dateTime = Get-Date
+        $dateTime = ([DateTime]${{inputs.deployment-date-time}}) #Get-Date
 
         try {    
-            Get-AWSPowerShellVersion #for some reason the octo server will not use the correct version of aws tools without this line
             $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
-            $repositoryUrl = "https://github.com/ellevation/ellevation-web.git"
-            $environment = "Pre"
-            $packageVersion = $OctopusParameters["Octopus.Action.Package[Ellevation.Web].PackageVersion"]
-            $replacedString = $packageVersion.Split("-")
-            $hash = $replacedString[1].Substring(1)
-            Write-Host "Short hash is $hash"
+            $repositoryUrl = ${{inputs.repository-url}}
+            $environment = ${{inputs.environment}}
+            $hash = ${{inputs.deployment-sha}}
             
             Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment    
         }
