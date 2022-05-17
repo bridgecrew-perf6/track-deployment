@@ -41,6 +41,7 @@ function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $enviro
     Write-Host $response
 }
 
+Import-Module AWS.Tools.CloudWatchLogs
 $dateTime = Get-Date
 
 try {    
