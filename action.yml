@@ -36,8 +36,6 @@ runs:
         ls
         pwsh
       shell: pwsh
-    - run: ${{ github.action_path }}/goodbye.sh
-      shell: bash
     - run: ${{ github.action_path }}/logDeployment.ps1
       shell: pwsh
 # runs:
