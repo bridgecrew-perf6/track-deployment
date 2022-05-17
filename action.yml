@@ -36,7 +36,7 @@ runs:
         ls
         pwsh
       shell: pwsh
-    - run: logDeployment.ps1
+    - run: ./logDeployment.ps1
       shell: pwsh
 # runs:
 #   using: 'docker'
