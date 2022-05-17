@@ -66,7 +66,7 @@ runs:
             Write-Host $response
         }
 
-        $dateTime = ([DateTime]${{inputs.deployment-date-time}}) #Get-Date
+        $dateTime = Get-Date
 
         try {    
             $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
