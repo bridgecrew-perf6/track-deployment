@@ -24,7 +24,7 @@ inputs:
         - pre
         - prod
   deployment-date-time:
-  description: >-
+    description: >-
       The ISO-formatted date and time of the deployment
     required: true
 runs:
