@@ -36,6 +36,8 @@ runs:
         ls
         pwsh
       shell: pwsh
+    - run: goodbye.sh
+      shell: bash
     - run: ./logDeployment.ps1
       shell: pwsh
 # runs:
