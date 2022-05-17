@@ -23,19 +23,12 @@ inputs:
     options: 
         - pre
         - prod
-  deployment-date-time:
-    description: >-
-      The ISO-formatted date and time of the deployment
-    required: true
 runs:
   using: "composite"
   steps:
     - run: |
         Install-Module -Name AWS.Tools.Installer -Force 
         Install-AWSToolsModule AWS.Tools.CloudWatchLogs -Force
-        Import-Module AWS.Tools.CloudWatchLogs
-        ls
-        pwsh
       shell: pwsh
     - run: ${{ github.action_path }}/logDeployment.ps1 -sha ${{ inputs.deployment-sha }} -repoUrl ${{ inputs.repository-url }} -env ${{ inputs.environment }} -vendorKey ${{ inputs.vendor-api-key }}
       shell: pwsh
