@@ -34,6 +34,7 @@ runs:
         Install-Module -Name AWS.Tools.Installer -Force 
         Install-AWSToolsModule AWS.Tools.CloudWatch -CleanUp -Force
         ls
+        pwsh
       shell: pwsh
     - run: logDeployment.ps1
       shell: pwsh
