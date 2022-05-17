@@ -9,7 +9,5 @@ RUN apt-get update
 RUN add-apt-repository universe
 RUN apt-get install -y powershell
 RUN ["pwsh", "-command" ,"$psversiontable"]
+RUN ls
 
-ADD logDeployment.ps1 /logDeployment.ps1
-
-ENTRYPOINT [ "logDeployment.ps1" ]
