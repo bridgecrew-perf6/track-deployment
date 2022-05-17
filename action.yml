@@ -33,6 +33,7 @@ runs:
     - run: |
         Install-Module -Name AWS.Tools.Installer -Force 
         Install-AWSToolsModule AWS.Tools.CloudWatchLogs -Force
+        Import-Module AWS.Tools.CloudWatchLogs
         ls
         pwsh
       shell: pwsh

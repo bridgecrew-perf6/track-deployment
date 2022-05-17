@@ -9,11 +9,11 @@ param(
     [string]$vendorKey
 )
 
-function Write-CloudWatchLog($currentTime, $hash, $repositoryUrl, $environment) {
+function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
     $message = @{
         Environment   = $environment
         Timestamp     = $currentTime
-        HeadSha       = $hash
+        HeadSha       = $sha
         RepositoryUrl = $repositoryUrl
     }
 
@@ -48,7 +48,7 @@ try {
     $repositoryUrl = $repoUrl
     $environment = $env
     
-    Write-LinearB $currentTimeInUnixSeconds $hash $repositoryUrl $environment $vendorKey  
+    Write-LinearB $currentTimeInUnixSeconds $sha $repositoryUrl $environment $vendorKey  
 }
 catch {
     Write-Host "Deploy Tracking Call Failed"
