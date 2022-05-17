@@ -50,6 +50,7 @@ $dateTime = Get-Date
 
 try {    
     $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
+    Write-Host "Logging to vendor"
     Write-LinearB $currentTimeInUnixSeconds $sha $repoUrl $env $vendorKey  
 }
 catch {
