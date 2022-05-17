@@ -29,10 +29,10 @@ inputs:
     required: true
 runs:
   using: "composite"
-  shell: pwsh
   steps:
     - run: |
         Install-Module -Name AWS.Tools.Installer -Force 
+      shell: pwsh
 # runs:
 #   using: 'docker'
 #   image: 'Dockerfile'
