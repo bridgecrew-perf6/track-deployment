@@ -31,5 +31,6 @@ runs:
   using: "composite"
   steps:
     - run: |
-        echo Hello 
-      shell: bash
+        ls
+        ./logDeployment.ps1
+      shell: pwsh
