@@ -53,11 +53,11 @@ if ($deploymentDateTimeOffset) {
     $dateTime = $deploymentDateTimeOffset
 }
 else {
-    $dateTime = Get-Date
+    $dateTime = [DateTimeOffset]::Now
 }
 
 try {    
-    $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
+    $currentTimeInUnixSeconds = $dateTime.ToUnixTimeSeconds()
     Write-Host "Logging to vendor"
     Write-LinearB $currentTimeInUnixSeconds $sha $repoUrl $env $vendorKey  
 }
@@ -68,11 +68,10 @@ catch {
 
 try {
     Write-Host "Logging to cloudwatch"
-    $universalTime = $dateTime.ToUniversalTime()
-    $formattedDate = Get-Date $universalTime -Format "o"
+    $formattedDate = $dateTime.ToUniversalTime().ToStirng("o")
     Write-CloudWatchLog $formattedDate $sha $repoUrl $env
 }
 catch {
-    Write-Host "Deploy Tracking Call To Cloudwatch Failed"
+    Write-Host "Deploy Tracking Call To CloudWatch Failed"
     Write-Host $_
 }
