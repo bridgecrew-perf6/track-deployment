@@ -42,8 +42,10 @@ runs:
           vendorKey = ${{ inputs.vendor-api-key }}
         }
 
-        if ('${{ inputs.deployment-date-time-offset }}') {
-          $parameters.add("deploymentDateTimeOffset", ${{ inputs.deployment-date-time-offset }})
+        $deploymentDateTimeOffset = '${{ inputs.deployment-date-time-offset }}'
+        if ($deploymentDateTimeOffset) {
+          echo "Deployment date given"
+          $parameters.add("deploymentDateTimeOffset", $deploymentDateTimeOffset)
         }
 
         ${{ github.action_path }}/logDeployment.ps1 @parameters
