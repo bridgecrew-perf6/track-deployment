@@ -42,6 +42,8 @@ function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environ
         event_time = $currentTimeInUnixSeconds
     }
 
+    Write-Host "LinearB Body: $body"
+
     $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
 
     Write-Host $response
@@ -68,7 +70,7 @@ catch {
 
 try {
     Write-Host "Logging to cloudwatch"
-    $formattedDate = $dateTime.ToUniversalTime().ToStirng("o")
+    $formattedDate = $dateTime.ToUniversalTime().ToString("o")
     Write-CloudWatchLog $formattedDate $sha $repoUrl $env
 }
 catch {
