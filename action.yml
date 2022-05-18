@@ -1,12 +1,12 @@
 name: 'Track Deployment'
-description: 'Track your deployment to Pre-Production and Production with this GitHub Action'
+description: 'Track your deployment to Pre-Production and Production with this GitHub Action. This action requires configured AWS credentials to log to CloudWatch'
 branding:
   icon: 'activity'
   color: 'white'
 inputs:
   vendor-api-key:
     description: >-
-      Deployment vendor API Key
+      Deployment vendor API key (currently LinearB)
     required: true
   deployment-sha:
     description: >-
@@ -18,7 +18,7 @@ inputs:
     required: true
   environment: 
     description: >-
-      The environment being deployed to
+      The environment involved in the deployment (only 'pre' and 'prod' need to be tracked)
     required: true
     options: 
         - pre
