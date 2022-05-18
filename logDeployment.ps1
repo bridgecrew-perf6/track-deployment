@@ -29,14 +29,14 @@ function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
     Write-Host "Next Sequence Token" $response
 }
 
-function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $environment, $vendorKey) {
+function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environment, $vendorKey) {
     if ($environment -ieq 'prod') {
         $environment = 'release' # linearb quirk
     }
 
     $uri = "https://public-api.linearb.io/api/v1/cycle-time-stages"
     $body = @{
-        head_sha   = $hash
+        head_sha   = $sha
         repo_url   = $repositoryUrl
         stage_id   = $environment
         event_time = $currentTimeInUnixSeconds
@@ -70,7 +70,7 @@ try {
     Write-Host "Logging to cloudwatch"
     $universalTime = $dateTime.ToUniversalTime()
     $formattedDate = Get-Date $universalTime -Format "o"
-    Write-CloudWatchLog $formattedDate $hash $repoUrl $env
+    Write-CloudWatchLog $formattedDate $sha $repoUrl $env
 }
 catch {
     Write-Host "Deploy Tracking Call To Cloudwatch Failed"
