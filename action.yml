@@ -23,6 +23,10 @@ inputs:
     options: 
         - pre
         - prod
+  deployment-date-time-offset: 
+    description: >-
+      The deployment date and time with offset. If not provided, current time will be used
+    required: false
 runs:
   using: "composite"
   steps:
@@ -30,5 +34,18 @@ runs:
         Install-Module -Name AWS.Tools.Installer -Force 
         Install-AWSToolsModule AWS.Tools.CloudWatchLogs -Force
       shell: pwsh
-    - run: ${{ github.action_path }}/logDeployment.ps1 -sha ${{ inputs.deployment-sha }} -repoUrl ${{ inputs.repository-url }} -env ${{ inputs.environment }} -vendorKey ${{ inputs.vendor-api-key }}
+    - run: |
+        $parameters = @{
+          sha = '${{ inputs.deployment-sha }}'
+          repoUrl = '${{ inputs.repository-url }}'
+          env = '${{ inputs.environment }}'
+          vendorKey = '${{ inputs.vendor-api-key }}'
+        }
+
+        $deploymentDateTimeOffset = '${{ inputs.deployment-date-time-offset }}'
+        if ($deploymentDateTimeOffset) {
+          $parameters.add("deploymentDateTimeOffset", $deploymentDateTimeOffset)
+        }
+
+        ${{ github.action_path }}/logDeployment.ps1 @parameters
       shell: pwsh

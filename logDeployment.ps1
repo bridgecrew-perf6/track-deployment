@@ -6,7 +6,9 @@ param(
     [parameter(Mandatory = $true)]
     [string]$env,
     [parameter(Mandatory = $true)]
-    [string]$vendorKey
+    [string]$vendorKey,
+    [parameter(Mandatory = $false)]
+    [DateTimeOffset]$deploymentDateTimeOffset
 )
 
 function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
@@ -27,18 +29,20 @@ function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
     Write-Host "Next Sequence Token" $response
 }
 
-function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $environment, $vendorKey) {
+function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environment, $vendorKey) {
     if ($environment -ieq 'prod') {
         $environment = 'release' # linearb quirk
     }
 
     $uri = "https://public-api.linearb.io/api/v1/cycle-time-stages"
     $body = @{
-        head_sha   = $hash
+        head_sha   = $sha
         repo_url   = $repositoryUrl
         stage_id   = $environment
         event_time = $currentTimeInUnixSeconds
     }
+
+    Write-Host "LinearB Body: " ($body | Out-String)
 
     $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
 
@@ -46,10 +50,16 @@ function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $enviro
 }
 
 Import-Module AWS.Tools.CloudWatchLogs
-$dateTime = Get-Date
+$dateTime;
+if ($deploymentDateTimeOffset) {
+    $dateTime = $deploymentDateTimeOffset
+}
+else {
+    $dateTime = [DateTimeOffset]::Now
+}
 
 try {    
-    $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
+    $currentTimeInUnixSeconds = $dateTime.ToUnixTimeSeconds()
     Write-Host "Logging to vendor"
     Write-LinearB $currentTimeInUnixSeconds $sha $repoUrl $env $vendorKey  
 }
@@ -60,11 +70,10 @@ catch {
 
 try {
     Write-Host "Logging to cloudwatch"
-    $universalTime = $dateTime.ToUniversalTime()
-    $formattedDate = Get-Date $universalTime -Format "o"
-    Write-CloudWatchLog $formattedDate $hash $repoUrl $env
+    $formattedDate = $dateTime.ToUniversalTime().ToString("o")
+    Write-CloudWatchLog $formattedDate $sha $repoUrl $env
 }
 catch {
-    Write-Host "Deploy Tracking Call To Cloudwatch Failed"
+    Write-Host "Deploy Tracking Call To CloudWatch Failed"
     Write-Host $_
 }
