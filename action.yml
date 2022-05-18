@@ -36,10 +36,10 @@ runs:
       shell: pwsh
     - run: |
         $parameters = @{
-          sha = ${{ inputs.deployment-sha }}
-          repoUrl = ${{ inputs.repository-url }}
-          env = ${{ inputs.environment }}
-          vendorKey = ${{ inputs.vendor-api-key }}
+          sha = '${{ inputs.deployment-sha }}'
+          repoUrl = '${{ inputs.repository-url }}'
+          env = '${{ inputs.environment }}'
+          vendorKey = '${{ inputs.vendor-api-key }}'
         }
 
         $deploymentDateTimeOffset = '${{ inputs.deployment-date-time-offset }}'
