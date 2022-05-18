@@ -6,7 +6,9 @@ param(
     [parameter(Mandatory = $true)]
     [string]$env,
     [parameter(Mandatory = $true)]
-    [string]$vendorKey
+    [string]$vendorKey,
+    [parameter(Mandatory = $false)]
+    [DateTimeOffset]$deploymentDateTimeOffset
 )
 
 function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
@@ -46,7 +48,13 @@ function Write-LinearB($currentTimeInUnixSeconds, $hash, $repositoryUrl, $enviro
 }
 
 Import-Module AWS.Tools.CloudWatchLogs
-$dateTime = Get-Date
+$dateTime;
+if ($deploymentDateTimeOffset) {
+    $dateTime = $deploymentDateTimeOffset
+}
+else {
+    $dateTime = Get-Date
+}
 
 try {    
     $currentTimeInUnixSeconds = ([DateTimeOffset]$dateTime).ToUnixTimeSeconds()
