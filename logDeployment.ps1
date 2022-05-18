@@ -21,8 +21,8 @@ function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
     $logEntry.Message = ($message | ConvertTo-Json)
     $logEntry.Timestamp = (Get-Date).ToUniversalTime()
 
-    $stream = Get-CWLLogStream -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamNamePrefix "OctoLogStream"
-    $response = Write-CWLLogEvent -SequenceToken $stream.UploadSequenceToken -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamName "OctoLogStream" -LogEvent $logEntry
+    $stream = Get-CWLLogStream -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamNamePrefix "GitHubLogStream"
+    $response = Write-CWLLogEvent -SequenceToken $stream.UploadSequenceToken -LogGroupName "DORASupportInfrastructureLogGroup" -LogStreamName "GitHubLogStream" -LogEvent $logEntry
     
     Write-Host "Next Sequence Token" $response
 }
