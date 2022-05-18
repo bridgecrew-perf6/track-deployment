@@ -37,12 +37,12 @@ runs:
     - run: |
         $parameters = @{
           sha = ${{ inputs.deployment-sha }}
-          repoUrl = {{ inputs.repository-url }}
+          repoUrl = ${{ inputs.repository-url }}
           env = ${{ inputs.environment }}
           vendorKey = ${{ inputs.vendor-api-key }}
         }
 
-        if (${{ inputs.deployment-date-time-offset }}) {
+        if (${{ inputs.deployment-date-time-offset || '' }}) {
           $parameters.add("deploymentDateTimeOffset", ${{ inputs.deployment-date-time-offset }})
         }
         ${{ github.action_path }}/logDeployment.ps1 @parameters
