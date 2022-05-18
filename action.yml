@@ -27,7 +27,6 @@ inputs:
     description: >-
       The deployment date and time with offset. If not provided, current time will be used
     required: false
-    default: ''
 runs:
   using: "composite"
   steps:
@@ -43,10 +42,10 @@ runs:
           vendorKey = ${{ inputs.vendor-api-key }}
         }
 
-        if (${{ inputs.deployment-date-time-offset }}) {
+        if ('${{ inputs.deployment-date-time-offset }}') {
           $parameters.add("deploymentDateTimeOffset", ${{ inputs.deployment-date-time-offset }})
         }
-        
+
         ${{ github.action_path }}/logDeployment.ps1 @parameters
         # ${{ github.action_path }}/logDeployment.ps1 -sha ${{ inputs.deployment-sha }} -repoUrl ${{ inputs.repository-url }} -env ${{ inputs.environment }} -vendorKey ${{ inputs.vendor-api-key }}
       shell: pwsh
