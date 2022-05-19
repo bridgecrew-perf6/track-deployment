@@ -2,7 +2,7 @@ param(
     [parameter(Mandatory = $true)]
     [string]$sha, # the sha of the deployment to track
     [parameter(Mandatory = $true)]
-    [string]$repoUrl, # the url of the repository of the deplyment to track
+    [string]$repoUrl, # the url of the repository of the deployment to track
     [parameter(Mandatory = $true)]
     [string]$env, # the environment used in the deployment (pre or prod)
     [parameter(Mandatory = $true)]
