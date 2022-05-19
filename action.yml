@@ -1,0 +1,51 @@
+name: 'Track Deployment'
+description: 'Track your deployment to Pre-Production and Production with this GitHub Action. This action requires configured AWS credentials to log to CloudWatch'
+branding:
+  icon: 'activity'
+  color: 'white'
+inputs:
+  vendor-api-key:
+    description: >-
+      Deployment vendor API key (currently LinearB)
+    required: true
+  deployment-sha:
+    description: >-
+      The git sha of the deployment to track
+    required: true
+  repository-url:
+    description: >-
+      The URL of the repository being tracked
+    required: true
+  environment: 
+    description: >-
+      The environment involved in the deployment (only 'pre' and 'prod' need to be tracked)
+    required: true
+    options: 
+        - pre
+        - prod
+  deployment-date-time-offset: 
+    description: >-
+      The deployment date and time with offset. If not provided, current time will be used
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        Install-Module -Name AWS.Tools.Installer -Force 
+        Install-AWSToolsModule AWS.Tools.CloudWatchLogs -Force
+      shell: pwsh
+    - run: |
+        $parameters = @{
+          sha = '${{ inputs.deployment-sha }}'
+          repoUrl = '${{ inputs.repository-url }}'
+          env = '${{ inputs.environment }}'
+          vendorKey = '${{ inputs.vendor-api-key }}'
+        }
+
+        $deploymentDateTimeOffset = '${{ inputs.deployment-date-time-offset }}'
+        if ($deploymentDateTimeOffset) {
+          $parameters.add("deploymentDateTimeOffset", $deploymentDateTimeOffset)
+        }
+
+        ${{ github.action_path }}/logDeployment.ps1 @parameters
+      shell: pwsh
