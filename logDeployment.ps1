@@ -1,14 +1,14 @@
 param(
     [parameter(Mandatory = $true)]
-    [string]$sha,
+    [string]$sha, # the sha of the deployment to track
     [parameter(Mandatory = $true)]
-    [string]$repoUrl,
+    [string]$repoUrl, # the url of the repository of the deplyment to track
     [parameter(Mandatory = $true)]
-    [string]$env,
+    [string]$env, # the environment used in the deployment (pre or prod)
     [parameter(Mandatory = $true)]
-    [string]$vendorKey,
+    [string]$vendorKey, # the api key of the vendor we use to track deployments (LinearB)
     [parameter(Mandatory = $false)]
-    [DateTimeOffset]$deploymentDateTimeOffset
+    [DateTimeOffset]$deploymentDateTimeOffset # the time of the deployment
 )
 
 function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
