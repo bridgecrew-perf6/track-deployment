@@ -30,10 +30,7 @@ function Write-CloudWatchLog($currentTime, $sha, $repositoryUrl, $environment) {
 }
 
 function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environment, $vendorKey) {
-    if ($environment -ieq 'prod') {
-        $environment = 'release' # linearb quirk
-    }
-
+    
     $uri = "https://public-api.linearb.io/api/v1/cycle-time-stages"
     $body = @{
         head_sha   = $sha
@@ -42,11 +39,20 @@ function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environ
         event_time = $currentTimeInUnixSeconds
     }
 
-    Write-Host "LinearB Body: " ($body | Out-String)
+    Write-Host "Prod LinearB Body: " ($body | Out-String)
 
-    $response = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
+    $prodResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
 
-    Write-Host $response
+    Write-Host $prodResponse
+
+    if ($environment -ieq 'prod') {
+        $body.stage_id = 'release' 
+        Write-Host "Release LinearB Body: " ($body | Out-String)
+
+        $releaseResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
+
+        Write-Host $releaseResponse
+    }
 }
 
 Import-Module AWS.Tools.CloudWatchLogs
