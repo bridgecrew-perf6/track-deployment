@@ -41,7 +41,7 @@ function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environ
 
     Write-Host "Prod LinearB Body: " ($body | Out-String)
 
-    $prodResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
+    $prodResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($body | ConvertTo-Json)
 
     Write-Host $prodResponse
 
@@ -49,7 +49,7 @@ function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environ
         $body.stage_id = 'release' 
         Write-Host "Release LinearB Body: " ($body | Out-String)
 
-        $releaseResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($Body | ConvertTo-Json)
+        $releaseResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($body | ConvertTo-Json)
 
         Write-Host $releaseResponse
     }
