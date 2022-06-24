@@ -39,7 +39,7 @@ function Write-LinearB($currentTimeInUnixSeconds, $sha, $repositoryUrl, $environ
         event_time = $currentTimeInUnixSeconds
     }
 
-    Write-Host "Prod LinearB Body: " ($body | Out-String)
+    Write-Host "LinearB Body: " ($body | Out-String)
 
     $prodResponse = Invoke-RestMethod -Method Post -Uri $uri -Header @{ "x-api-key" = $vendorKey; "Content-Type" = "application/json" } -Body ($body | ConvertTo-Json)
 
